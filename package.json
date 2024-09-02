@@ -3,10 +3,12 @@
 	"module": "src/index.ts",
 	"type": "module",
 	"scripts": {
-		"bot": "cd src;bun run index.ts"
+		"bot": "cd src;bun run index.ts",
+		"build": "bun build --target node ./src/index.ts --outdir ./dist;cp ./src/projects.json ./dist"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"@types/node": "^22.5.2"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
