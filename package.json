@@ -1,0 +1,18 @@
+{
+	"name": "artbot",
+	"module": "src/index.ts",
+	"type": "module",
+	"scripts": {
+		"bot": "cd src;bun run index.ts"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"discord.js": "^14.15.3",
+		"dotenv": "^16.4.5"
+	}
+}
