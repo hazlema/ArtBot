@@ -9,7 +9,7 @@ class BotMessages {
         return new EmbedBuilder().setDescription(msg)
     }
 
-    static eventPosted = (name: string, subject: string, beginTime: Date, endTime: Date) => {
+    static eventPosted = (name: string, subject: string, mention: string, beginTime: Date, endTime: Date) => {
         let msg =
             `🎊 ${name}: **${subject}**\n\n` +
             `🕒 Began: ${beginTime.toUTCString()}\n` +
@@ -19,6 +19,10 @@ class BotMessages {
             `2️⃣ No editing the image manually.\n` +
             `3️⃣ No external images may be used.\n` +
             `4️⃣ You can use a LLM to help you design a prompt.\n\n`
+
+        if (mention != "") {
+            msg += `${mention}`
+        }
 
         return new EmbedBuilder().setDescription(msg)
     }

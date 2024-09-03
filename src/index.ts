@@ -20,12 +20,12 @@ let myEvents = new DiscordEvents()
 /*
  * Channel Messages / Broadcasts
  */
-function broadcast(channelID: string, msg: string, start: Date, end: Date) {
+function broadcast(channelID: string, msg: string, mention: string, start: Date, end: Date) {
     client.channels.fetch(channelID).then((channel) => {
         if (channel) {
             let topic = getTopic()
             if (topic != null) {
-                channel.send({ embeds: [BotMessages.eventPosted(msg, topic, start, end)] })
+                channel.send({ embeds: [BotMessages.eventPosted(msg, topic, mention, start, end)] })
             } else {
                 output.console("[Error] Missing projects.json")
             }
@@ -41,13 +41,17 @@ function broadcast(channelID: string, msg: string, start: Date, end: Date) {
 function addContest(intr: ChatInputCommandInteraction) {
     let optName: string | null = intr.options.getString("name")
     let optFrequency: number | null = intr.options.getInteger("frequency")
+    let optMention: string = ""
     let channel: string = intr.channelId
 
     if (optName && optFrequency && channel) {
+        let mentionOpt: string | null = intr.options.getString("mention")
+        if (mentionOpt) optMention = mentionOpt
+
         output.console(`[Add Event] ${optName} (Every ${optFrequency} hours, for channel ${channel})`)
         intr.reply({ embeds: [BotMessages.eventAdded(optName, optFrequency, channel)], ephemeral: true })
 
-        myEvents.add(new DiscordEvent(optName, 60 * 60 * optFrequency, channel, Date.now()))
+        myEvents.add(new DiscordEvent(optName, 60 * 60 * optFrequency, channel, optMention, Date.now()))
     }
 }
 
@@ -68,7 +72,7 @@ async function initEvents() {
                 let start: Date = new Date()
                 let end: Date = new Date(new Date().getTime() + e.frequency)
 
-                broadcast(e.channel, e.name, start, end)
+                broadcast(e.channel, e.name, e.mention, start, end)
             }
         })
     }, 1000)
@@ -79,7 +83,8 @@ async function initEvents() {
 async function registerSlash() {
     try {
         output.console(`[Info] Registering slash commands with Discord.. Please wait..`)
-        await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
+        const data: any = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
+        output.console(`[Info] Successfully reloaded ${data.length} application (/) commands.`)
     } catch (error: any) {
         output.console(`[Registering] ${error}`)
         throw new Error(JSON.stringify(error))
@@ -97,6 +102,7 @@ client.on("interactionCreate", async (interaction) => {
 
 client.once(Events.ClientReady, (readyClient) => {
     output.console(`[Ready] Logged in as ${readyClient.user.tag}`)
+    client.guilds.cache.each((guild) => output.console(`[Info] ${guild.name} (${guild.id})`))
     initEvents()
 })
 

@@ -16,6 +16,11 @@ const slashCmds = {
                     required: true,
                     type: 4,
                 },
+                {
+                    name: "mention",
+                    description: "Tag any groups you want to mention in the event",
+                    type: 3,
+                },
             ],
         },
     ],

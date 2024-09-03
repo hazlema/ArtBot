@@ -11,6 +11,7 @@ interface IDiscordEvent {
     timeStamp: number
     updates: number
     channel: string
+    mention: string
 
     isRun: () => boolean
     setNextEvent: () => void
@@ -33,12 +34,14 @@ class DiscordEvent implements IDiscordEvent {
     timeStamp: number
     updates: number
     channel: string
+    mention: string
 
-    constructor(name: string, frequency: number, channel: string, timestamp?: number) {
+    constructor(name: string, frequency: number, channel: string, mention?: string, timestamp?: number) {
         this.name = name
         this.channel = channel
         this.frequency = frequency * 1000
         this.timeStamp = timestamp || 0
+        this.mention = mention || ""
         this.updates = 0
 
         if (this.timeStamp === 0) {
@@ -66,6 +69,7 @@ class DiscordEvent implements IDiscordEvent {
             frequency: this.frequency / 1000,
             timeStamp: this.timeStamp,
             updates: this.updates,
+            mention: this.mention,
         }
     }
 }
