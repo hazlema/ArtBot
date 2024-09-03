@@ -104,6 +104,9 @@ To run:
 bun run bot
 ```
 
+## Console Logs
+![screenshot](./assets/logs.png)
+
 ## Transpiling to Native JavaScript
 
 While Bun is gaining popularity, not all hosting providers support it yet. Don't worry though – you can easily convert your Bun project to pure JavaScript, ensuring compatibility with virtually any hosting environment.
