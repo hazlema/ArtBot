@@ -25,7 +25,7 @@ This Discord bot brings excitement to your server by automatically hosting art c
 
 ## Command: addcontest
 1. Go to the channel where you want to run the contest
-2. Type in: `/addcontest [name of the contest] [time between  contests] [mention]`
+2. Type in: `/addcontest [name of the contest] [hours between contests] [mention]`
 
 ![Example](./assets/addprompt.png)
 
