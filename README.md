@@ -80,6 +80,11 @@ TOKEN_ID=[Your bots token]
 APP_ID=[Your application ID]
 ```
 
+OK, I have set up the bot and it's running but it's not in my server.  
+
+Right, you have to invite it to your server, here are instructions:
+[https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links]
+
 ---
 
 Enjoy fostering creativity in your Discord community with the Art Contest Bot! 🎭🖌️

@@ -105,3 +105,4 @@ registerSlash().then(() => {
 })
 
 // TODO: Add a way to delete the events for a channel
+// TODO: Add a role mention to the posted Message
