@@ -44,7 +44,8 @@ class DiscordEvent implements IDiscordEvent {
 		if (this.timeStamp === 0) {
 			this.setNextEvent()
 		} else {
-			output.console(`[Loaded Event] ${this.name} for: (${new Date(this.timeStamp).toLocaleString()})`)
+			// TODO: Verify channel exists
+			output.console(`[Loaded Event] ${this.name} for: ${new Date(this.timeStamp).toLocaleString()}, on channel: ${this.channel}`)
 		}
     }
 
