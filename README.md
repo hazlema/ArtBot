@@ -10,11 +10,13 @@ This Discord bot brings excitement to your server by automatically hosting art c
 - 🚀 **Automated Contests**: Spits out ArtContest messages at configurable intervals.
 - 📚 **Diverse Topics**: Draws from a JSON file of 100 prepared topics.
 - 🔄 **No Repeats**: Never draws duplicate topics until all have been used.
-- ✏️ **Customizable**: Easily add your own topics by editing `src/projects.json`.
+- 📬 **Mention a roll**: Mention rolls and notify your users
+- 👉 **Customizable**: Easily add your own topics by editing `src/projects.json`.
 - 💡 **Smart Event Handling**: 
   - Remembers the next contest time even if offline.
   - Adjusts contest times if offline during a scheduled event.
   - Displays notices upon coming back online if contests were missed.
+  - Mention a roll in 
 
 ## Features Planned
 
@@ -26,6 +28,8 @@ This Discord bot brings excitement to your server by automatically hosting art c
 - Go to the channel where you want to run the contest
 - Type in: `/addcontest [name of the contest] [time between contests]`
 Example: `/addcontest Daily Contest 24hrs`
+
+![screenshot](./assets/addprompt.png)
 
 ![screenshot](./assets/eventadded.png)
 
