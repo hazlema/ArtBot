@@ -23,19 +23,17 @@ This Discord bot brings excitement to your server by automatically hosting art c
 - 🙋 Will have a reaction system where you can react to a post and be added or removed from groups
 - 🪙 Will have a ArtCoin system, where you get an ArtCoin every time you react to someones art!  (see if you can collect the most!)
 
-## Commands
-
-- Go to the channel where you want to run the contest
-- The mention entry is optional
-- Type in: `/addcontest [name of the contest] [time between contests] [mention]`
+## Command: addcontest
+1. Go to the channel where you want to run the contest
+2. Type in: `/addcontest [name of the contest] [time between  contests] [mention]`
 
 ![Example](./assets/addprompt.png)
 
-![screenshot](./assets/eventadded.png)
+- The mention entry is **optional**
+- Times are displayed in GMT
+- Time intervals are in hours (24 is a day, 168 is a week)
 
-Time intervals will be in hours:
-- 24hrs is one day
-- 168hrs is one week
+![screenshot](./assets/eventadded.png)
 
 ![screenshot](./assets/samplepost.png)
 
