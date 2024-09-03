@@ -27,9 +27,13 @@ This Discord bot brings excitement to your server by automatically hosting art c
 - Type in: `/addcontest [name of the contest] [time between contests]`
 Example: `/addcontest Daily Contest 24hrs`
 
+![screenshot](./assets/eventadded.png)
+
 Time intervals will be in hours:
 - 24hrs is one day
 - 168hrs is one week
+
+![screenshot](./assets/samplepost.png)
 
 ## Setup and Configuration
 
