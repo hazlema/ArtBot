@@ -26,10 +26,10 @@ This Discord bot brings excitement to your server by automatically hosting art c
 ## Commands
 
 - Go to the channel where you want to run the contest
-- Type in: `/addcontest [name of the contest] [time between contests]`
-Example: `/addcontest Daily Contest 24hrs`
+- The mention entry is optional
+- Type in: `/addcontest [name of the contest] [time between contests] [mention]`
 
-![screenshot](./assets/addprompt.png)
+![Example](./assets/addprompt.png)
 
 ![screenshot](./assets/eventadded.png)
 
