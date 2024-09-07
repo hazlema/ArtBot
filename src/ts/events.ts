@@ -119,6 +119,11 @@ class DiscordEvents implements IDiscordEvents {
     add(event: DiscordEvent) {
         this.events.push(event)
     }
+
+	removeByChannel(channel: string) {
+		this.events = this.events.filter((event) => event.channel !== channel)
+		this.save()
+	}
 }
 
 //--[ Exports ]----------------------------------------------------------------

@@ -26,6 +26,16 @@ class BotMessages {
 
         return new EmbedBuilder().setDescription(msg)
     }
+
+	static artBotSetup = (username:string, id:string) => {
+		return new EmbedBuilder().setDescription(`🎉 ArtBot has been setup! 🎉\n\n` + `👤 Owner Info: ${username} (${id})`)
+	}
+
+	static eventRemoved = () => {
+		return new EmbedBuilder().setDescription(`⏹️ Events Removed`)
+	}
 }
+
+
 
 export { BotMessages }

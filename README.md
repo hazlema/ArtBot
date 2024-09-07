@@ -23,9 +23,9 @@ This Discord bot brings excitement to your server by automatically hosting art c
 - 🙋 Will have a reaction system where you can react to a post and be added or removed from groups
 - 🪙 Will have a ArtCoin system, where you get an ArtCoin every time you react to someones art!  (see if you can collect the most!)
 
-## Command: addcontest
+## Command: artbot-addcontest
 1. Go to the channel where you want to run the contest
-2. Type in: `/addcontest [name of the contest] [hours between contests] [mention]`
+2. Type in: `/artbot-addcontest [name of the contest] [hours between contests] [mention]`
 
 ![Example](./assets/addprompt.png)
 
@@ -36,6 +36,12 @@ This Discord bot brings excitement to your server by automatically hosting art c
 ![screenshot](./assets/eventadded.png)
 
 ![screenshot](./assets/samplepost.png)
+
+## Command: artbot-delcontest
+1. Go to the channel where you want to delete the contest
+2. Type in: `/artbot-delcontest
+
+![Example](./assets/delprompt.png)
 
 ## Setup and Configuration
 

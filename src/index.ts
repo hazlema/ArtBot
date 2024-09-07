@@ -1,6 +1,6 @@
 /* Discord */
 import "dotenv/config"
-import { REST, Routes } from "discord.js"
+import { Guild, REST, Routes, User } from "discord.js"
 import { ChatInputCommandInteraction, Client, Events, GatewayIntentBits } from "discord.js"
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN_ID as string)
@@ -36,7 +36,7 @@ function broadcast(channelID: string, msg: string, mention: string, start: Date,
 }
 
 /*
- * applicationCommand: /addcontest
+ * applicationCommand: /artbot-addcontest
  */
 function addContest(intr: ChatInputCommandInteraction) {
     let optName: string | null = intr.options.getString("name")
@@ -54,6 +54,33 @@ function addContest(intr: ChatInputCommandInteraction) {
         myEvents.add(new DiscordEvent(optName, 60 * 60 * optFrequency, channel, optMention, Date.now()))
     }
 }
+
+/*
+ * applicationCommand: /artbot-delcontest
+ */
+function delContest(intr: ChatInputCommandInteraction) {
+    let channel: string = intr.channelId
+
+    if (channel) {
+		myEvents.removeByChannel(channel)
+		intr.reply({ embeds: [BotMessages.eventRemoved()], ephemeral: true })
+	}
+}
+ 
+/*
+ * applicationCommand: /artbot-setup
+ */
+async function artBotSetup(int: ChatInputCommandInteraction) {
+	let guild : Guild  = await client.guilds.fetch(process.env.GUILD_ID as string)
+	let owner : string = await guild?.ownerId
+	let user  : User   = await client.users?.fetch(owner as string)
+
+	if (user.username && user.id) {
+		output.console(`[Setup] Owner ${user.username} (${user.id})`)
+		int.reply({ embeds: [ BotMessages.artBotSetup(user.username, user.id) ], ephemeral: true })
+	}
+}
+
 
 /*
  * Initialization of the ArtBot's timers
@@ -81,9 +108,18 @@ async function initEvents() {
 //---[ Discord Functions ]-----------------------------------------------------
 
 async function registerSlash() {
+	let data: any
+
     try {
+        output.console(`[Info] Resetting all slash commands.. Please wait..`)
+		data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string),{ body: [] });
+        output.console(`[Info] Successfully reset ${data.length} application (/) commands.`)
+		
+		data = await rest.put(Routes.applicationGuildCommands(process.env.APP_ID as string, process.env.GUILD_ID as string),{ body: [] });
+        output.console(`[Info] Successfully reset ${data.length} application (/) commands.`)
+		
         output.console(`[Info] Registering slash commands with Discord.. Please wait..`)
-        const data: any = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
+        data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
         output.console(`[Info] Successfully reloaded ${data.length} application (/) commands.`)
     } catch (error: any) {
         output.console(`[Registering] ${error}`)
@@ -97,7 +133,9 @@ client.on("interactionCreate", async (interaction) => {
     if (!interaction.isChatInputCommand()) return
     output.console(`[Interaction] ${interaction.commandName} (${interaction.user.tag})`)
 
-    if (interaction.commandName === "addcontest") addContest(interaction)
+	if (interaction.commandName === "artbot-addcontest")     addContest(interaction)
+	if (interaction.commandName === "artbot-deletecontest")  delContest(interaction)
+	if (interaction.commandName === "artbot-setup")          artBotSetup(interaction)
 })
 
 client.once(Events.ClientReady, (readyClient) => {
@@ -110,5 +148,4 @@ registerSlash().then(() => {
     client.login(process.env.TOKEN_ID)
 })
 
-// TODO: Add a way to delete the events for a channel
-// TODO: Add a role mention to the posted Message
+// TODO: Multiple Servers
