@@ -69,14 +69,13 @@ ANTHROPIC_API_KEY=[Your Anthropic API key]
 - [Get a key](https://console.anthreopic.com/)
 - **Note**: If you don't want to use the AI feature, omit the ANTHROPIC_API_KEY.
 
-2. Customize the contest frequency in the configuration file (details in the source code).
-
-3. Run the bot:
+2. Run the bot:
 ```bash
 bun run bot
 ```
 
-4. Invite the bot to your server using [these instructions](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links).
+3. Invite the bot to your server using [these instructions](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links).
+
 
 ## Usage
 
