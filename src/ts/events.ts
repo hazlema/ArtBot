@@ -62,6 +62,13 @@ class DiscordEvent implements IDiscordEvent {
         output.console(`[Setting Event] ${this.name} for: (${new Date(this.timeStamp).toLocaleString()})`)
     }
 
+	setRetryEvent() {
+        this.timeStamp = Date.now() + 60 * 1000
+        this.updates -= 1
+
+		output.console(`[Setting Event Retry] ${this.name} (in 1 min)`)
+    }
+
     toJSON() {
         return {
             name: this.name,
@@ -100,7 +107,7 @@ class DiscordEvents implements IDiscordEvents {
             const parsed = JSON.parse(data)
 
             this.events = parsed.map((eventData: any) => {
-                const event = new DiscordEvent(eventData.name, eventData.frequency, eventData.channel, eventData.timeStamp)
+                const event = new DiscordEvent(eventData.name, eventData.frequency, eventData.channel, eventData.mention, eventData.timeStamp)
                 event.updates = eventData.updates
                 return event
             })

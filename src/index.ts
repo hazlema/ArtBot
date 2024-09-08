@@ -20,18 +20,21 @@ let myEvents = new DiscordEvents()
 /*
  * Channel Messages / Broadcasts
  */
-function broadcast(channelID: string, msg: string, mention: string, start: Date, end: Date) {
-    client.channels.fetch(channelID).then((channel) => {
+async function broadcast(channelID: string, msg: string, mention: string, start: Date, end: Date) {
+    return client.channels.fetch(channelID).then(async (channel) => {
         if (channel) {
-            let topic = getTopic()
+            let topic = await getTopic()
             if (topic != null) {
-                channel.send({ embeds: [BotMessages.eventPosted(msg, topic, mention, start, end)] })
+                channel.send({ embeds: [BotMessages.eventPosted(msg, topic as string, mention, start, end)] })
+				return true
             } else {
                 output.console("[Error] Missing projects.json")
             }
         } else {
             output.console("[Error] Channel not found")
         }
+
+		return false
     })
 }
 
@@ -90,7 +93,7 @@ async function initEvents() {
 
     // Start timer
     setInterval(() => {
-        myEvents.events.forEach((e) => {
+        myEvents.events.forEach(async (e) => {
             if (e.isRun()) {
                 e.setNextEvent()
                 myEvents.save()
@@ -99,11 +102,15 @@ async function initEvents() {
                 let start: Date = new Date()
                 let end: Date = new Date(new Date().getTime() + e.frequency)
 
-                broadcast(e.channel, e.name, e.mention, start, end)
-            }
-        })
-    }, 1000)
+                if (await broadcast(e.channel, e.name, e.mention, start, end) == false) {
+					e.setRetryEvent()
+					myEvents.save()
+				}
+			}
+		})
+	}, 1000)
 }
+
 
 //---[ Discord Functions ]-----------------------------------------------------
 
@@ -111,13 +118,10 @@ async function registerSlash() {
 	let data: any
 
     try {
-        output.console(`[Info] Resetting all slash commands.. Please wait..`)
-		data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string),{ body: [] });
-        output.console(`[Info] Successfully reset ${data.length} application (/) commands.`)
-		
-		data = await rest.put(Routes.applicationGuildCommands(process.env.APP_ID as string, process.env.GUILD_ID as string),{ body: [] });
-        output.console(`[Info] Successfully reset ${data.length} application (/) commands.`)
-		
+        // output.console(`[Info] Resetting all slash commands.. Please wait..`)
+		// data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string),{ body: [] });
+        // output.console(`[Info] Successfully reset ${data.length} application (/) commands.`)
+	
         output.console(`[Info] Registering slash commands with Discord.. Please wait..`)
         data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
         output.console(`[Info] Successfully reloaded ${data.length} application (/) commands.`)

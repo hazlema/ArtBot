@@ -5,6 +5,8 @@
 
 This Discord bot brings excitement to your server by automatically hosting art contests! It's designed to be flexible, reliable, and easy to customize.
 
+This bot is still in the alpha stages, it is usable but some features may not work properly
+
 ### Key Features
 
 - 🚀 **Automated Contests**: Spits out ArtContest messages at configurable intervals.
@@ -18,12 +20,21 @@ This Discord bot brings excitement to your server by automatically hosting art c
   - Displays notices upon coming back online if contests were missed.
   - Mention a roll in 
 
+## New Features
+
+- :robot: **Themes can now be AI enabled**: If all the themes have been used and you have set the appropriate [Anthropic API key](https://console.anthropic.com/dashboard).  The topics file will be automatically refreshed with unique new topics.
+- ❌ **New command /artbot-deletecontest**: Removes the contest from the current channel
+
+
+## Change log:
+9/8/2024: Fix for the scheduling date sometimes not loading properly.
+
 ## Features Planned
 
 - 🙋 Will have a reaction system where you can react to a post and be added or removed from groups
 - 🪙 Will have a ArtCoin system, where you get an ArtCoin every time you react to someones art!  (see if you can collect the most!)
 
-## Command: artbot-addcontest
+## Command: /artbot-addcontest
 1. Go to the channel where you want to run the contest
 2. Type in: `/artbot-addcontest [name of the contest] [hours between contests] [mention]`
 
@@ -37,9 +48,9 @@ This Discord bot brings excitement to your server by automatically hosting art c
 
 ![screenshot](./assets/samplepost.png)
 
-## Command: artbot-delcontest
+## Command: /artbot-deletecontest
 1. Go to the channel where you want to delete the contest
-2. Type in: `/artbot-delcontest
+2. Type in: /artbot-deletecontest
 
 ![Example](./assets/delprompt.png)
 
@@ -55,6 +66,7 @@ This Discord bot brings excitement to your server by automatically hosting art c
 ## Customizing Topics
 
 To add or modify contest topics:
+(**If you want to do this, you should disable the AI module**)
 
 1. Open `src/projects.json`
 2. Edit the JSON array of topics
@@ -86,11 +98,16 @@ Open a text editor and copy and paste the information from the discord bot page
 ```
 TOKEN_ID=[Your bots token]
 APP_ID=[Your application ID]
+ANTHROPIC_API_KEY=[Your anthropic api key]
 ```
 
-OK, I have set up the bot and it's running but it's not in my server.  
+If you do not want to use the AI feature, just delete the ANTHROPIC field.
 
-Right, you have to invite it to your server, here are instructions:
+## Questions:
+
+Q. OK, I have set up the bot and it's running but it's not in my server.  
+
+A. Right, you have to invite it to your server, here are instructions:
 [https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links]
 
 ---

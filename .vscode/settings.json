@@ -1,3 +1,8 @@
 {
-    "cSpell.words": ["addcontest", "botmessages", "Cmds"]
+    "cSpell.words": [
+		"addcontest",
+		"botmessages",
+		"Cmds",
+		"retval"
+	]
 }

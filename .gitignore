@@ -180,3 +180,6 @@ dist
 # data
 src/used.json
 src/events.json
+memory.ai
+/.vscode
+ArtBot.code-workspace
