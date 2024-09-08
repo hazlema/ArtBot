@@ -62,11 +62,11 @@ class DiscordEvent implements IDiscordEvent {
         output.console(`[Setting Event] ${this.name} for: (${new Date(this.timeStamp).toLocaleString()})`)
     }
 
-	setRetryEvent() {
+    setRetryEvent() {
         this.timeStamp = Date.now() + 60 * 1000
         this.updates -= 1
 
-		output.console(`[Setting Event Retry] ${this.name} (in 1 min)`)
+        output.console(`[Setting Event Retry] ${this.name} (in 1 min)`)
     }
 
     toJSON() {
@@ -127,10 +127,10 @@ class DiscordEvents implements IDiscordEvents {
         this.events.push(event)
     }
 
-	removeByChannel(channel: string) {
-		this.events = this.events.filter((event) => event.channel !== channel)
-		this.save()
-	}
+    removeByChannel(channel: string) {
+        this.events = this.events.filter((event) => event.channel !== channel)
+        this.save()
+    }
 }
 
 //--[ Exports ]----------------------------------------------------------------

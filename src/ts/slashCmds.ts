@@ -1,17 +1,17 @@
 const slashCmds = {
     body: [
-		{
-			name: "artbot-setup",
-			description: "Configure ArtBot",
-		},
-		{
-			name: "artbot-deletecontest",
-			description: "Delete contests for this channel",
-		},
-		{
+        {
+            name: "artbot-setup",
+            description: "Configure ArtBot",
+        },
+        {
+            name: "artbot-deletecontest",
+            description: "Delete contests for this channel",
+        },
+        {
             name: "artbot-addcontest",
             description: "Adds an event to the list of events",
-			options: [
+            options: [
                 {
                     name: "name",
                     description: "Name of the event",
