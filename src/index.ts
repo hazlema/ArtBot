@@ -28,15 +28,9 @@ async function broadcast(channelID: string, msg: string, mention: string, start:
     return client.channels.fetch(channelID).then(async (channel) => {
         if (channel) {
             // TODO: Multiple topic files
-			
 			let topic;
-			if (ai.isAi) {
-				topic = await getTopic("projects.json", "used.json")
-			} else {
-				topic = await getTopic("topics.json", "used.json")
-			}
-			
-			
+			topic = await getTopic(ai.isAi ? "projects.json" : "topics.json", "used.json");
+		
             if (topic != null) {
                 channel.send({ embeds: [BotMessages.eventPosted(msg, topic as string, mention, start, end)] })
                 return true
@@ -128,15 +122,15 @@ async function registerSlash() {
     let data: any
 
     try {
-        output.console(`[Info] Resetting Slash Commands...`)
-        data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), { body: [] })
-
+        //output.console(`[Info] Resetting Slash Commands...`)
+        //data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), { body: [] })
         output.console(`[Info] Registering slash commands with Discord.. Please wait..`)
-		data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
-        output.console(`[Info] Successfully reloaded ${data.length} application (/) commands.`)
+		//console.log(JSON.stringify(slashCmds, null, 5))
+        data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), { body: slashCmds })
+        output.console(`[Info] Registered ${data.length} application (/) commands.`)
     } catch (error: any) {
         output.console(`[Registering] ${error}`)
-        throw new Error(JSON.stringify(error))
+        throw error
     }
 }
 
@@ -153,6 +147,7 @@ client.on("interactionCreate", async (interaction) => {
 
 
 client.once(Events.ClientReady, (readyClient) => {
+	output.console(`[Info] AI Mode: ${ai.isAi ? 'Enabled' : 'Disabled'}`)
     output.console(`[Ready] Logged in as ${readyClient.user.tag}`)
     client.guilds.cache.each((guild) => output.console(`[Info] ${guild.name} (${guild.id})`))
     initEvents()

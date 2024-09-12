@@ -1,40 +1,33 @@
-const slashCmds = {
-    body: [
-        {
-            name: "artbot-refresh",
-            description: "Force event to run",
-			default_member_permissions: "40",
-        },
-        {
-            name: "artbot-deletecontest",
-            description: "Delete contests for this channel",
-			default_member_permissions: "40",
-        },
-        {
-            name: "artbot-addcontest",
-            description: "Adds an event to the list of events",
-			default_member_permissions: "40",
-            options: [
-                {
-                    name: "name",
-                    description: "Name of the event",
-                    required: true,
-                    type: 3,
-                },
-                {
-                    name: "frequency",
-                    description: "Frequency of the event in hours",
-                    required: true,
-                    type: 4,
-                },
-                {
-                    name: "mention",
-                    description: "Tag any groups you want to mention in the event",
-                    type: 3,
-                },
-            ],
-        },
-    ],
-}
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 
-export { slashCmds }
+const slashCmds = [
+    new SlashCommandBuilder()
+        .setName('artbot-refresh')
+        .setDescription('Force event to run')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageEvents),
+
+    new SlashCommandBuilder()
+        .setName('artbot-deletecontest')
+        .setDescription('Delete contests for this channel')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageEvents),
+
+    new SlashCommandBuilder()
+        .setName('artbot-addcontest')
+        .setDescription('Adds an event to the list of events')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageEvents)
+        .addStringOption(option =>
+            option.setName('name')
+                .setDescription('The name of the contest')
+                .setRequired(true))
+        .addIntegerOption(option =>
+            option.setName('frequency')
+                .setDescription('How often the contest should run (in hours)')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('mention')
+                .setDescription('Role to mention (optional)')
+                .setRequired(false))
+];
+
+export { slashCmds };

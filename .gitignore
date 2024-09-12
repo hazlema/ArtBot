@@ -181,8 +181,9 @@ dist
 src/used.json
 src/events.json
 src/memory.ai
+src/projects.json
 memory.ai
 /.vscode
 ArtBot.code-workspace
- /logs
- 
+/logs
+src/projects.json
