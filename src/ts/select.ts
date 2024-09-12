@@ -1,80 +1,98 @@
 import { existsSync, readFileSync, writeFileSync } from "fs"
+import type { AiQuery } from "./ai"
 import { output } from "./output"
 import { Ai } from "./ai"
-import type { AiQuery } from "./ai"
 
 const ai = new Ai()
 
-interface TopicFile {
-    topics: string[]
-}
+// AI Stuff
+async function fetchNewTopics(sourcePath: string, dupesPath: string): Promise<Boolean> {
+    if (ai.isAi == true && ai.isAiRunning == false) {
+        // Create new source file
+        output.console(`[Info] Starting AI Topics update, this could take a minute... Events deferred for 1 minute...`)
 
-function getUnique(source: TopicFile, duplicates: TopicFile) {
-    return source.topics.filter((topic) => !duplicates.topics.includes(topic))
-}
-
-async function aiUpdate(sourcePath: string): Promise<TopicFile | null> {
-    output.console("[Info] Starting AI update")
-
-    // Extract the text content from the message
-    const query: AiQuery | null = await ai.askClaude(
-        "Can you create a json file with 10 entries, these entries should be text fields and contain " +
+        const query: AiQuery | null = await ai.askClaude(
+            "Can you create a json file with 10 entries, these entries should be text fields and contain " +
             "a digital art topic. Something like: Neon underwater civilization, " +
             "impressionistic painting of woman eating an apple, or cartoon of a mouse being mischievous " +
             "try to keep the entries under 10 words in length. And please do not use any of the suggested topics. " +
             "randomize as much as possible. "
-    )
+        )
 
-    if (query?.response && query?.tokens) {
-        output.console(`[Info] AI update complete, (Tokens Used = ${query.tokens})`)
-        output.console(`[Info] Writing new projects file`)
+        if (query?.response && query?.tokens) {
+            output.console(`[Info] AI update complete, (Tokens Used = ${query.tokens})`)
 
-        writeFileSync(sourcePath, JSON.stringify(query.response, null, 5))
-        return query.response as TopicFile
+            writeFileSync(sourcePath, JSON.stringify(query.response, null, 5))
+            return true
+        }
+
+        return false
     }
 
-    return null
-}
-
-async function selectRandomTopic(sourcePath: string, dupesPath: string) {
-    if (!existsSync(dupesPath)) {
+    if (ai.isAi == false) {
         writeFileSync(dupesPath, '{ "topics": [] }')
+        return true
     }
 
-    if (!existsSync(sourcePath)) {
-        let data = await aiUpdate(sourcePath)
-        if (!data) {
-            output.console("[CRITICAL] Could not reach AI and no projects file")
-            return null
+    // AI is Busy
+    return false
+}
+
+// Load a topic file
+function jsonTopicLoader(path: string): JsonTopicFile {
+    if (existsSync(path)) {
+        try {
+            return JSON.parse(readFileSync(path, "utf-8")) as JsonTopicFile
+        } catch (err) {
+            console.error(`[CRITICAL] Could not load topics file. Error: ${err}`)
         }
     }
 
-    try {
-        let source = JSON.parse(readFileSync(sourcePath, "utf-8")) as TopicFile
-        let dupes = JSON.parse(readFileSync(dupesPath, "utf-8")) as TopicFile
-        let unique = getUnique(source, dupes)
+    return { topics: [] }
+}
 
-        // Roll over
-        if (unique.length === 0) {
-            aiUpdate(sourcePath)
-            //dupes = JSON.parse('{ "topics":[] }') as TopicFile;
-            unique = getUnique(source, dupes)
-        }
+// Check if there is a unique topic
+function getUniqueTopic(sourcePath: string, dupesPath: string): UniqueTopicResult {
+    let src: JsonTopicFile = jsonTopicLoader(sourcePath)
+    let dup: JsonTopicFile = jsonTopicLoader(dupesPath)
+    let uni: string[] = src.topics.filter((topic) => !dup.topics.includes(topic))
+    let sel: string = ""
 
-        // Randomly select a topic from the unique topics
-        const random = Math.floor(Math.random() * unique.length)
-        const selected = unique[random]
+    // Choose Randomly
+    if (uni.length !== 0) {
+        let random = Math.floor(Math.random() * uni.length)
+        sel = uni[random]
+    }
 
-        dupes.topics.push(selected)
-        writeFileSync(dupesPath, JSON.stringify(dupes, null, 2))
-
-        return selected
-    } catch (err) {
-        console.error(`Something went wrong: ${err}`)
-        return null
+    return {
+        unique: src.topics.filter((topic) => !dup.topics.includes(topic)),
+        selected: sel,
+        source: src,
+        dupes: dup,
     }
 }
 
-export async function getTopic() {
-    return await selectRandomTopic("projects.json", "used.json")
+// Entry point
+async function getTopic(sourcePath: string, dupesPath: string): Promise<string> {
+    let result: UniqueTopicResult = getUniqueTopic(sourcePath, dupesPath)
+
+    if (ai.isAiRunning == false) {
+        if (result.selected === "") {
+            await fetchNewTopics(sourcePath, dupesPath).then(() => {
+                result = getUniqueTopic(sourcePath, dupesPath)
+
+                if (result.selected === "") {
+                    output.console("[CRITICAL] Could not get new topics")
+                    return null
+                }
+            })
+        }
+    }
+
+    result.dupes.topics.push(result.selected)
+    writeFileSync(dupesPath, JSON.stringify(result.dupes, null, 5))
+
+    return result.selected
 }
+
+export { getTopic }

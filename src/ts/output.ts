@@ -1,9 +1,5 @@
-//--[ Interfaces ]-------------------------------------------------------------
-
-interface IOutputStatic {
-    toColor(str: string): void
-    console(str: string): void
-}
+import { appendFileSync, existsSync, mkdirSync } from "node:fs"
+import { join } from "node:path"
 
 //--[ Static Methods Class ]---------------------------------------------------
 
@@ -55,12 +51,24 @@ class output {
         console.log(str + "\x1b[0;0m")
     }
 
+    static toLog(str: string): void {
+        // Create filename
+		const date: Date = new Date(Date.now())
+        const padTwo = (n: number) => n.toString().padStart(2, "0")
+        const fileName: string = `${date.getFullYear()}${padTwo(date.getMonth() + 1)}${padTwo(date.getDate())}.log`
+
+        // Ensure logs directory exists
+        if (!existsSync("logs")) {
+            mkdirSync("logs", { recursive: true })
+        }
+
+        appendFileSync(join("logs", fileName), str + "\n")
+    }
+
     static console(str: string): void {
-        //const dateOptions: Intl.DateTimeFormatOptions = { year: '2-digit', month: '2-digit', day: '2-digit' };
         const timeOptions: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: true }
 
         let now = new Date(Date.now())
-        //const date = now.toLocaleDateString(undefined, dateOptions).replace(/\//g, '-');
         const time = now.toLocaleTimeString(undefined, timeOptions)
 
         function prependColorCodes(input: string): string {
@@ -96,11 +104,9 @@ class output {
             return output
         }
 
+        output.toLog(`(${time}) ${str}`)
         output.toColor(prependColorCodes(`(${time}) ${str}`))
     }
 }
 
-//--[ Exports ]----------------------------------------------------------------
-
-const typedOutput: IOutputStatic = output
-export { typedOutput as output }
+export { output }

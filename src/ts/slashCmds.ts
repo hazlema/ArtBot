@@ -1,16 +1,19 @@
 const slashCmds = {
     body: [
         {
-            name: "artbot-setup",
-            description: "Configure ArtBot",
+            name: "artbot-refresh",
+            description: "Force event to run",
+			default_member_permissions: "40",
         },
         {
             name: "artbot-deletecontest",
             description: "Delete contests for this channel",
+			default_member_permissions: "40",
         },
         {
             name: "artbot-addcontest",
             description: "Adds an event to the list of events",
+			default_member_permissions: "40",
             options: [
                 {
                     name: "name",

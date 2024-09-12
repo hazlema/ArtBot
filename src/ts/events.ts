@@ -3,31 +3,6 @@ import { join } from "node:path"
 import { access, constants } from "node:fs/promises"
 import { output } from "./output"
 
-//--[ Interfaces ]-------------------------------------------------------------
-
-interface IDiscordEvent {
-    name: string
-    frequency: number
-    timeStamp: number
-    updates: number
-    channel: string
-    mention: string
-
-    isRun: () => boolean
-    setNextEvent: () => void
-    toJSON: () => object
-}
-
-interface IDiscordEvents {
-    events: IDiscordEvent[]
-
-    save: () => void
-    load: () => Promise<void>
-    add: (event: DiscordEvent) => void
-}
-
-//--[ Classes ]----------------------------------------------------------------
-
 class DiscordEvent implements IDiscordEvent {
     name: string
     frequency: number
@@ -66,7 +41,7 @@ class DiscordEvent implements IDiscordEvent {
         this.timeStamp = Date.now() + 60 * 1000
         this.updates -= 1
 
-        output.console(`[Setting Event Retry] ${this.name} (in 1 min)`)
+        output.console(`[Event Deferred] ${this.name} will run in 1m`)
     }
 
     toJSON() {

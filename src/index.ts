@@ -9,6 +9,9 @@ import { output } from "./ts/output"
 import { getTopic } from "./ts/select"
 import { slashCmds } from "./ts/slashCmds"
 import { BotMessages } from "./ts/botmessages"
+import { Ai } from "./ts/ai"
+
+const ai = new Ai()
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN_ID as string)
 
@@ -24,12 +27,21 @@ let myEvents = new DiscordEvents()
 async function broadcast(channelID: string, msg: string, mention: string, start: Date, end: Date) {
     return client.channels.fetch(channelID).then(async (channel) => {
         if (channel) {
-            let topic = await getTopic()
+            // TODO: Multiple topic files
+			
+			let topic;
+			if (ai.isAi) {
+				topic = await getTopic("projects.json", "used.json")
+			} else {
+				topic = await getTopic("topics.json", "used.json")
+			}
+			
+			
             if (topic != null) {
                 channel.send({ embeds: [BotMessages.eventPosted(msg, topic as string, mention, start, end)] })
                 return true
             } else {
-                output.console("[Error] Missing projects.json")
+                output.console("[Error] Updating Topics (will retry)")
             }
         } else {
             output.console("[Error] Channel not found")
@@ -72,17 +84,16 @@ function delContest(intr: ChatInputCommandInteraction) {
 }
 
 /*
- * applicationCommand: /artbot-setup
+ * applicationCommand: /artbot-refresh
  */
-async function artBotSetup(int: ChatInputCommandInteraction) {
-    let guild: Guild = await client.guilds.fetch(process.env.GUILD_ID as string)
-    let owner: string = await guild?.ownerId
-    let user: User = await client.users?.fetch(owner as string)
+async function artBotRefresh(intr: ChatInputCommandInteraction) {
+	let channels = myEvents.events.filter(e => e.channel == intr.channelId.toString())
+	let text     = channels.map(e => e.name).join(", ")
 
-    if (user.username && user.id) {
-        output.console(`[Setup] Owner ${user.username} (${user.id})`)
-        int.reply({ embeds: [BotMessages.artBotSetup(user.username, user.id)], ephemeral: true })
-    }
+	output.console(`[Reset Events] (${text})`)
+	myEvents.events.filter(e => e.channel == intr.channelId.toString()).forEach(e => e.setRetryEvent())
+	myEvents.save()
+	intr.reply({ embeds: [BotMessages.eventReset(text)], ephemeral: true })
 }
 
 /*
@@ -117,8 +128,11 @@ async function registerSlash() {
     let data: any
 
     try {
+        output.console(`[Info] Resetting Slash Commands...`)
+        data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), { body: [] })
+
         output.console(`[Info] Registering slash commands with Discord.. Please wait..`)
-        data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
+		data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), slashCmds)
         output.console(`[Info] Successfully reloaded ${data.length} application (/) commands.`)
     } catch (error: any) {
         output.console(`[Registering] ${error}`)
@@ -129,13 +143,14 @@ async function registerSlash() {
 //---[ Discord Events ]--------------------------------------------------------
 
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isChatInputCommand()) return
+	if (!interaction.isChatInputCommand()) return
     output.console(`[Interaction] ${interaction.commandName} (${interaction.user.tag})`)
-
+	
     if (interaction.commandName === "artbot-addcontest") addContest(interaction)
     if (interaction.commandName === "artbot-deletecontest") delContest(interaction)
-    if (interaction.commandName === "artbot-setup") artBotSetup(interaction)
+    if (interaction.commandName === "artbot-refresh") artBotRefresh(interaction)
 })
+
 
 client.once(Events.ClientReady, (readyClient) => {
     output.console(`[Ready] Logged in as ${readyClient.user.tag}`)
@@ -143,9 +158,9 @@ client.once(Events.ClientReady, (readyClient) => {
     initEvents()
 })
 
+
 registerSlash().then(() => {
     client.login(process.env.TOKEN_ID)
 })
 
 // TODO: Multiple Servers
-// TODO: The bot uses the AI, need to add the support back in for static files

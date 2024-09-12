@@ -152,6 +152,8 @@ A: You need to invite the bot to your server. Follow the instructions [here](htt
 ## Changelog
 
 - 9/8/2024: Fixed an issue where the scheduling date sometimes didn't load properly.
+- 9/8/2024: Refactored select.ts
+- 9/9/2024: Added Logging
 
 ---
 
