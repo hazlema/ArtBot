@@ -10,6 +10,7 @@ import { getTopic } from "./ts/select"
 import { slashCmds } from "./ts/slashCmds"
 import { BotMessages } from "./ts/botmessages"
 import { Ai } from "./ts/ai"
+import { channel } from "node:diagnostics_channel"
 
 const ai = new Ai()
 
@@ -26,21 +27,22 @@ let myEvents = new DiscordEvents()
  */
 async function broadcast(channelID: string, name: string, mention: string, start: Date, end: Date) {
 	if (client.channels.cache.has(channelID)) {
-		return client.channels.fetch(channelID).then(async (channel) => {
-			if (channel) {
-				let topic = await getTopic(ai.isAi ? "ai-topics.json" : "topics.json", "used.json");
-			
-				if (topic != null) {
-					channel.send({ embeds: [BotMessages.eventPosted(name, topic as string, mention, start, end)] })
-					return true
-				} else {
-					output.console("[Error] Updating Topics (will retry)")
-				}
+		let channel = client.channels.cache.get(channelID)
+		
+		if (channel) {
+			let topic = await getTopic(ai.isAi ? "ai-topics.json" : "topics.json", "used.json");
+
+			if (topic != null) {
+				channel.send({ embeds: [BotMessages.eventPosted(name, topic as string, mention, start, end)] })
+				return true
+			} else {
+				output.console("[Error] Updating Topics (will retry)")
+				return false
 			}
-		})
+		}
 	}
 
-	output.console(`[Error] Channel: (${channelID}) for Event: (${name}) not found`)
+	output.console(`[Error] Channel (${channelID}), for Event (${name}) not found`)
 	return false
 }
 
