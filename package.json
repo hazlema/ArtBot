@@ -4,7 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"bot": "cd src;bun run index.ts",
-		"build": "bun run clean;bun build --target node ./src/index.ts --outdir ./dist;cp ./src/projects.json ./dist;cp ./src/.env.sample ./dist;cp README.md ./dist;cp -r assets ./dist;mv ./dist/index.js ./dist/ArtBot.js;",
+		"build": "bun run clean;bun build --target node ./src/index.ts --outdir ./dist;cp ./src/topics.json ./dist;cp ./src/.env.sample ./dist;cp README.md ./dist;cp -r assets ./dist;mv ./dist/index.js ./dist/ArtBot.js;",
 		"clean": "rm -rf ./dist ./src/used.json ./src/events.json"
 	},
 	"devDependencies": {

@@ -89,6 +89,7 @@ async function getTopic(sourcePath: string, dupesPath: string): Promise<string> 
         }
     }
 
+	output.console(`[Info] Unique topics left: ${result.unique.length}`)
     result.dupes.topics.push(result.selected)
     writeFileSync(dupesPath, JSON.stringify(result.dupes, null, 5))
 

@@ -28,11 +28,11 @@ class BotMessages {
     }
 
     static eventReset = (eventNames: string) => {
-        return new EmbedBuilder().setDescription(`☠️ ArtBot will reset ${eventNames} in 1 minute`)
+        return new EmbedBuilder().setDescription(`🔁 ArtBot will refresh\n${eventNames} (in 1 minute)`)
     }
 
     static eventRemoved = () => {
-        return new EmbedBuilder().setDescription(`⏹️ Events Removed`)
+        return new EmbedBuilder().setDescription(`❌ Events Removed`)
     }
 }
 

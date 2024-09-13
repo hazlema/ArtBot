@@ -2,6 +2,8 @@ import fs from "fs"
 import { join } from "node:path"
 import { access, constants } from "node:fs/promises"
 import { output } from "./output"
+import Global from "./global"
+import { type Channel, TextChannel } from "discord.js"
 
 class DiscordEvent implements IDiscordEvent {
     name: string
@@ -10,8 +12,10 @@ class DiscordEvent implements IDiscordEvent {
     updates: number
     channel: string
     mention: string
+    global: SingletonData;
 
     constructor(name: string, frequency: number, channel: string, mention?: string, timestamp?: number) {
+        this.global = Global.getInstance();
         this.name = name
         this.channel = channel
         this.frequency = frequency * 1000
@@ -22,11 +26,23 @@ class DiscordEvent implements IDiscordEvent {
         if (this.timeStamp === 0) {
             this.setNextEvent()
         } else {
-            output.console(`[Loaded Event] ${this.name} for: ${new Date(this.timeStamp).toLocaleString()}, on channel: ${this.channel}`)
-        }
+			let channelName = this.getChannelNameFromId(this.channel)
+			output.console(`[Loaded Event] ${this.name} for (${new Date(this.timeStamp).toLocaleString()}), on channel: (${channelName})`)
+		}
     }
 
-    isRun = () => {
+	getChannelNameFromId(channelName: string) {
+		if (this.global.client.channels.cache.has(this.channel)) {
+			let channel : Channel | undefined = this.global.client.channels.cache.get(this.channel)
+			if (channel instanceof TextChannel) {
+				channelName = channel.name
+			}
+		}
+	
+		return channelName
+	}
+
+	isRun = () => {
         return this.timeStamp < Date.now()
     }
 
@@ -34,14 +50,14 @@ class DiscordEvent implements IDiscordEvent {
         this.timeStamp = Date.now() + this.frequency
         this.updates += 1
 
-        output.console(`[Setting Event] ${this.name} for: (${new Date(this.timeStamp).toLocaleString()})`)
+        output.console(`[Setting] ${this.name} for (${new Date(this.timeStamp).toLocaleString()})`)
     }
 
     setRetryEvent() {
         this.timeStamp = Date.now() + 60 * 1000
         this.updates -= 1
 
-        output.console(`[Event Deferred] ${this.name} will run in 1m`)
+        output.console(`[Deferred] ${this.name} will run in 1m`)
     }
 
     toJSON() {
@@ -63,7 +79,7 @@ class DiscordEvents implements IDiscordEvents {
 
     constructor() {
         this.events = []
-    }
+	}
 
     save() {
         let path = join(process.cwd(), ".", "events.json")

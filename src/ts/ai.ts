@@ -4,11 +4,6 @@ import { promises as fs } from "fs"
 import { join } from "node:path"
 import { output } from "./output"
 
-interface AiQuery {
-    response: { topics: string[] }
-    tokens: number
-}
-
 class Ai {
     private client?: Anthropic
     private memoryFile: string = join(process.cwd(), ".", "memory.ai")
@@ -86,4 +81,3 @@ class Ai {
 }
 
 export { Ai }
-export type { AiQuery }

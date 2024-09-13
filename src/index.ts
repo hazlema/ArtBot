@@ -1,4 +1,5 @@
 /* Discord */
+
 import "dotenv/config"
 import { Guild, REST, Routes, User } from "discord.js"
 import { ChatInputCommandInteraction, Client, Events, GatewayIntentBits } from "discord.js"
@@ -10,7 +11,9 @@ import { getTopic } from "./ts/select"
 import { slashCmds } from "./ts/slashCmds"
 import { BotMessages } from "./ts/botmessages"
 import { Ai } from "./ts/ai"
-import { channel } from "node:diagnostics_channel"
+import Global from "./ts/global"
+
+const global = new Global()
 
 const ai = new Ai()
 
@@ -21,6 +24,7 @@ const client = new Client({
 })
 
 let myEvents = new DiscordEvents()
+
 
 /*
  * Channel Messages / Broadcasts
@@ -89,7 +93,7 @@ async function artBotRefresh(intr: ChatInputCommandInteraction) {
 	let channels = myEvents.events.filter(e => e.channel == intr.channelId.toString())
 	let text     = channels.map(e => e.name).join(", ")
 
-	output.console(`[Reset Events] (${text})`)
+	output.console(`[Refresh] ${text}`)
 	myEvents.events.filter(e => e.channel == intr.channelId.toString()).forEach(e => e.setRetryEvent())
 	myEvents.save()
 	intr.reply({ embeds: [BotMessages.eventReset(text)], ephemeral: true })
@@ -107,7 +111,7 @@ async function initEvents() {
             if (e.isRun()) {
                 e.setNextEvent()
                 myEvents.save()
-                output.console(`[Exec Event] ${e.name}`)
+                output.console(`[Executing] ${e.name}`)
 
                 let start: Date = new Date()
                 let end: Date = new Date(new Date().getTime() + e.frequency)
@@ -127,10 +131,6 @@ async function registerSlash() {
     let data: any
 
     try {
-        //output.console(`[Info] Resetting Slash Commands...`)
-        //data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), { body: [] })
-        output.console(`[Info] Registering slash commands with Discord.. Please wait..`)
-		//console.log(JSON.stringify(slashCmds, null, 5))
         data = await rest.put(Routes.applicationCommands(process.env.APP_ID as string), { body: slashCmds })
         output.console(`[Info] Registered ${data.length} application (/) commands.`)
     } catch (error: any) {
@@ -153,8 +153,9 @@ client.on("interactionCreate", async (interaction) => {
 
 client.once(Events.ClientReady, (readyClient) => {
 	output.console(`[Info] AI Mode: ${ai.isAi ? 'Enabled' : 'Disabled'}`)
-    output.console(`[Ready] Logged in as ${readyClient.user.tag}`)
+    output.console(`[Info] Logged in as ${readyClient.user.tag}`)
     client.guilds.cache.each((guild) => output.console(`[Info] ${guild.name} (${guild.id})`))
+	global.data["client"] = client;
     initEvents()
 })
 

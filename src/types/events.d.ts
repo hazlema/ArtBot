@@ -6,7 +6,8 @@ declare interface IDiscordEvent {
     channel: string
     mention: string
 
-    isRun: () => boolean
+    getChannelNameFromId: (channelId: string) => string
+	isRun: () => boolean
     setNextEvent: () => void
     toJSON: () => object
 }
