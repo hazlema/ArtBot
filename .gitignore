@@ -187,3 +187,4 @@ memory.ai
 ArtBot.code-workspace
 /logs
 src/projects.json
+src/ai-topics.json

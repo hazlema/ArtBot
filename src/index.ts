@@ -24,25 +24,24 @@ let myEvents = new DiscordEvents()
 /*
  * Channel Messages / Broadcasts
  */
-async function broadcast(channelID: string, msg: string, mention: string, start: Date, end: Date) {
-    return client.channels.fetch(channelID).then(async (channel) => {
-        if (channel) {
-            // TODO: Multiple topic files
-			let topic;
-			topic = await getTopic(ai.isAi ? "projects.json" : "topics.json", "used.json");
-		
-            if (topic != null) {
-                channel.send({ embeds: [BotMessages.eventPosted(msg, topic as string, mention, start, end)] })
-                return true
-            } else {
-                output.console("[Error] Updating Topics (will retry)")
-            }
-        } else {
-            output.console("[Error] Channel not found")
-        }
+async function broadcast(channelID: string, name: string, mention: string, start: Date, end: Date) {
+	if (client.channels.cache.has(channelID)) {
+		return client.channels.fetch(channelID).then(async (channel) => {
+			if (channel) {
+				let topic = await getTopic(ai.isAi ? "ai-topics.json" : "topics.json", "used.json");
+			
+				if (topic != null) {
+					channel.send({ embeds: [BotMessages.eventPosted(name, topic as string, mention, start, end)] })
+					return true
+				} else {
+					output.console("[Error] Updating Topics (will retry)")
+				}
+			}
+		})
+	}
 
-        return false
-    })
+	output.console(`[Error] Channel: (${channelID}) for Event: (${name}) not found`)
+	return false
 }
 
 /*
