@@ -40,10 +40,13 @@ async function broadcast(channelID: string, name: string, mention: string, start
 				return false
 			}
 		}
+
 	}
 
 	output.console(`[Error] Channel (${channelID}), for Event (${name}) not found`)
-	return false
+	output.console(`[Error] Removing channel from events`)
+	myEvents.removeByChannel(channelID)
+	return true
 }
 
 /*
@@ -75,6 +78,7 @@ function delContest(intr: ChatInputCommandInteraction) {
     if (channel) {
         myEvents.removeByChannel(channel)
         intr.reply({ embeds: [BotMessages.eventRemoved()], ephemeral: true })
+		myEvents.save()
     }
 }
 
