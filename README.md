@@ -1,4 +1,4 @@
-# 🎨 Art Contest Discord Bot v0.1
+# 🎨 Art Contest Discord Bot v0.2 Stable
 
 ![logo](./assets/logo.png)
 
